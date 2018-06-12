@@ -83,16 +83,50 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var resultArray = [];
+    _.each(collection, function(item) {
+      if (test(item)) {
+        resultArray.push(item);
+      }
+    });  
+    return resultArray;
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+
+    var filterArray = _.filter(collection, test);
+
+    var finalArray = [];
+    for (var i = 0; i < collection.length; i++) {
+      if (!filterArray.includes(collection[i])) {
+        finalArray.push(collection[i]);
+      }
+    }
+    return finalArray;
   };
 
   // Produce a duplicate-free version of the array.
+
+  // Make cleaner version with each/map/filter
   _.uniq = function(array, isSorted, iterator) {
+    var uniqueArray = [];
+    var iteratorCheck = [];
+    for (var i = 0; i < array.length; i++) {
+      if (iterator) {
+        if (!iteratorCheck.includes(iterator(array[i]))) {
+          iteratorCheck.push(iterator(array[i]));
+          uniqueArray.push(array[i]);
+        }
+      } else {
+        if (!uniqueArray.includes(array[i])) {
+          uniqueArray.push(array[i]);
+        }
+      }
+    }
+    return uniqueArray;
   };
 
 
@@ -101,6 +135,15 @@
     // map() is a useful primitive iteration function that works a lot
     // like each(), but in addition to running the operation on all
     // the members, it also maintains an array of results.
+    // var result = [];
+    // for (var i = 0; i < collection.length; i++) {
+    //   result.push(iterator(collection[i]));
+    // }
+    var result = [];
+    _.each(collection, function(val) {
+      result.push(iterator(val));      
+    });
+    return result; 
   };
 
   /*
@@ -142,6 +185,25 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+
+    if (accumulator !== 0 && !accumulator) {
+      var memo = collection[0];
+      for (var i = 1; i < collection.length; i++) {
+        memo = iterator(memo, collection[i]);
+      }
+    } else {
+      var memo = accumulator;
+      for (var i = 0; i < collection.length; i++) {
+        memo = iterator(memo, collection[i]);
+      }
+    }
+    //if length = 1 dont use iterator
+  
+
+
+    //if length > 1 use iterator
+    return memo;
+
   };
 
   // Determine if the array or object contains a given value (using `===`).
