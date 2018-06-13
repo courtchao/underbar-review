@@ -184,26 +184,18 @@
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
-  _.reduce = function(collection, iterator, accumulator) {
+  _.reduce = function(collection, iterator, accumulator) {  
+    let startingPoint = arguments.length === 2; //startingpoint is equal to boolean
 
-    if (accumulator !== 0 && !accumulator) {
-      var memo = collection[0];
-      for (var i = 1; i < collection.length; i++) {
-        memo = iterator(memo, collection[i]);
+    _.each(collection, function(val){ //for each value in the collection
+      if (startingPoint === true) { //if we're at the startngpoint
+        startingPoint = false; //first set it equal to false so it doesn't run again (like once)
+        accumulator = val; //set accumulator to be equal to val
+      } else {
+        accumulator = iterator(accumulator, val); //if there are 3 args, 1 arg, or not on the first run through accumulate iterated values
       }
-    } else {
-      var memo = accumulator;
-      for (var i = 0; i < collection.length; i++) {
-        memo = iterator(memo, collection[i]);
-      }
-    }
-    //if length = 1 dont use iterator
-  
-
-
-    //if length > 1 use iterator
-    return memo;
-
+    });
+    return accumulator; //return accumulated value
   };
 
   // Determine if the array or object contains a given value (using `===`).
@@ -221,7 +213,12 @@
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
-    // TIP: Try re-using reduce() here.
+    return _.reduce(collection, function(wasFound, item) {
+      if (!wasFound) {
+        return false;
+      }
+      return
+    });
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
@@ -250,11 +247,34 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
+    let destination = arguments[0]; //set destination as first argument
+
+    for (let i = 0; i < arguments.length; i++) { //for the amount of the arguments/parameters
+      for (let key in arguments[i]) { //for each key in argument
+        destination[key] = arguments[i][key]; //set destination[key] to be the key:value pair from the argument
+      }
+    }
+    return destination; //return extended object
   };
+
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    let destination = arguments[0]; //set destination as first argument
+
+    for (let i = 0; i < arguments.length; i++) { //for the amount of arguments
+      for (let key in arguments[i]) { //for each key in argument
+        if(destination.hasOwnProperty(key)) { //if the key already exists in destination
+          destination[key] = destination[key]; //the key/value pair remains the same
+        } else {
+          destination[key] = arguments[i][key]; //otherwise assign it 
+        }
+      }
+    }
+
+    return destination; //return extended object
   };
 
 
@@ -298,6 +318,9 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var cache = [];
+
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -307,6 +330,11 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    var argumentsArray = Array.prototype.slice.call(arguments, 2);
+    
+    setTimeout(function() {
+      func.apply(null, argumentsArray)
+    }, wait)
   };
 
 
